@@ -96,24 +96,29 @@ S'ouvre sur: http://localhost:8501
 - **🏪 Localisations** - Analyse de performance des magasins
 - **⚙️ Paramètres** - Configuration de base de données
 
-## 5️⃣ Configurer la production (BigQuery) - Optionnel
+## 5️⃣ Configurer la production (MySQL) - Optionnel
 
 ### Prérequis:
-- Projet Google Cloud
-- BigQuery activé
-- Compte de service avec rôle BigQuery Admin
+- Serveur MySQL installé et en cours d'exécution
+- Accès root ou compte avec permissions de création
+- Connaître l'adresse du serveur MySQL
 
 ### Étapes:
 ```bash
-# 1. Télécharger la clé JSON du compte de service
+# 1. Créer une base de données MySQL
+mysql -u root -p -e "CREATE DATABASE jaffle_shop_analytics;"
 
-# 2. Installer l'adaptateur BigQuery
-pip install dbt-bigquery
+# 2. Créer un utilisateur MySQL
+mysql -u root -p -e "CREATE USER 'jaffle_user'@'localhost' IDENTIFIED BY 'password123';"
+mysql -u root -p -e "GRANT ALL PRIVILEGES ON jaffle_shop_analytics.* TO 'jaffle_user'@'localhost';"
 
-# 3. Mettre à jour profiles.yml (déjà configuré)
-# Modifiez: project, dataset, chemin du fichier de clé
+# 3. Installer l'adaptateur MySQL
+pip install dbt-mysql
 
-# 4. Exécuter contre la production
+# 4. Mettre à jour profiles.yml (déjà configuré)
+# Modifiez: host, user, pass, database
+
+# 5. Exécuter contre la production
 dbt run --target prod
 dbt test --target prod
 ```

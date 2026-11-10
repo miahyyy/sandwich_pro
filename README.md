@@ -363,7 +363,7 @@ dbt run --vars '{"load_source_data": true}'
 
 ## 🗄️ Support multi-bases de données (Dev et Prod)
 
-Ce projet supporte à la fois PostgreSQL (développement) et BigQuery (production):
+Ce projet supporte à la fois PostgreSQL (développement) et MySQL (production):
 
 ### Base de données de développement (PostgreSQL)
 ```yaml
@@ -385,30 +385,33 @@ dbt run --target dev
 dbt test --target dev
 ```
 
-### Base de données de production (BigQuery)
+### Base de données de production (MySQL)
 
-Configurez BigQuery dans `profiles.yml`:
+Configurez MySQL dans `profiles.yml`:
 ```yaml
 prod:
-  type: bigquery
-  method: service-account
-  project: your-gcp-project-id
-  dataset: jaffle_shop_analytics
-  keyfile: /path/to/service-account-key.json
+  type: mysql
+  host: your-mysql-host.com
+  user: your-mysql-user
+  pass: your-mysql-password
+  port: 3306
+  database: jaffle_shop_analytics
+  schema: analytics
   threads: 8
-  location: US
-  priority: interactive
 ```
 
 **Étapes de configuration:**
-1. Créer un projet Google Cloud
-2. Créer un dataset BigQuery
-3. Créer un compte de service avec rôle BigQuery Admin
-4. Télécharger la clé JSON du compte de service
-5. Mettre à jour `profiles.yml` avec l'ID du projet et le chemin de la clé
-6. Installer l'adaptateur BigQuery:
+1. Installer/configurer un serveur MySQL
+2. Créer une base de données pour Jaffle Shop (ex: `jaffle_shop_analytics`)
+3. Créer un utilisateur MySQL avec les permissions appropriées
+4. Mettre à jour `profiles.yml` avec:
+   - Host: adresse du serveur MySQL
+   - User: nom d'utilisateur MySQL
+   - Pass: mot de passe MySQL
+   - Database: nom de la base de données
+5. Installer l'adaptateur MySQL:
    ```bash
-   pip install dbt-bigquery
+   pip install dbt-mysql
    ```
 
 **Exécution de dbt contre la production:**
@@ -434,17 +437,18 @@ dbt test --target dev
 
 ## 🔄 Adaptateurs de base de données
 
-Ce projet est configuré pour PostgreSQL et BigQuery. Pour ajouter d'autres adaptateurs:
+Ce projet est configuré pour PostgreSQL (dev) et MySQL (prod). Pour ajouter d'autres adaptateurs:
 
 1. **Installer l'adaptateur approprié:**
    ```bash
+   pip install dbt-mysql      # pour MySQL
    pip install dbt-snowflake  # pour Snowflake
    pip install dbt-bigquery   # pour BigQuery
    ```
 
 2. **Mettre à jour `profiles.yml`** avec les détails de connexion spécifiques à l'adaptateur
 
-3. **Vérifier que les macros supportent le dialecte** (cents_to_dollars supporte: Postgres, BigQuery, Fabric)
+3. **Vérifier que les macros supportent le dialecte** (cents_to_dollars supporte: Postgres, MySQL, BigQuery, Fabric)
 
 ## 📝 Git et CI/CD
 

@@ -376,18 +376,20 @@ SCHEMA: analytics
         """)
         st.info("Modifiez les variables d'environnement dans le fichier .env pour modifier la connexion à la base de données")
 
-    with st.expander("🔄 Configuration BigQuery", expanded=False):
+    with st.expander("🔄 Configuration MySQL", expanded=False):
         st.subheader("Configuration de la base de données de production")
         st.write("""
-Pour activer BigQuery comme base de données de production:
+Pour activer MySQL comme base de données de production:
 
-1. Configurer un projet Google Cloud
-2. Créer un compte de service avec permissions BigQuery
-3. Télécharger la clé JSON du compte de service
-4. Mettre à jour profiles.yml avec le chemin du fichier de clé:
+1. Installer un serveur MySQL
+2. Créer une base de données: jaffle_shop_analytics
+3. Créer un utilisateur MySQL avec permissions
+4. Mettre à jour profiles.yml:
    ```
-   keyfile: /path/to/service-account-key.json
-   project: your-gcp-project-id
+   host: your-mysql-host.com
+   user: your-mysql-user
+   pass: your-mysql-password
+   database: jaffle_shop_analytics
    ```
 5. Exécuter: `dbt run --target prod`
         """)

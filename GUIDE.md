@@ -3,7 +3,7 @@
 ## Référence rapide
 
 **Type de projet:** Projet dbt Analytics Engineering  
-**Base de données:** PostgreSQL (configurable vers BigQuery, Snowflake, etc.)  
+**Base de données:** PostgreSQL (dev) + MySQL (prod)  
 **Langage principal:** SQL avec modèles Jinja2  
 **Version:** 3.0.0
 
@@ -19,7 +19,7 @@ Ceci est un projet dbt (data build tool) de démonstration pour un pipeline d'an
 
 ### Configuration
 - `dbt_project.yml` - Configuration dbt principale, paramètres de matérialisation des modèles
-- `profiles.yml` - Détails de connexion à la base de données (PostgreSQL par défaut + BigQuery en prod)
+- `profiles.yml` - Détails de connexion à la base de données (PostgreSQL dev + MySQL prod)
 - `Taskfile.yml` - Exécuteur de tâches automatisé pour la configuration et les tests
 
 ### Modèles
@@ -127,24 +127,28 @@ Données sources brutes définies dans: `models/staging/__sources.yml`
 - Cible par défaut
 - Utilisée pour les tests et le développement
 
-### Production (BigQuery)
+### Production (MySQL)
 - Nom de la cible: `prod`
-- Nécessite un projet Google Cloud + compte de service
+- Nécessite un serveur MySQL accessible
 - Concurrence plus élevée (8 threads vs 4)
 - Pour l'analytique d'entreprise
 
 **Basculer entre les bases de données:**
 ```bash
-dbt run --target dev   # Développement
-dbt run --target prod  # Production (BigQuery)
+dbt run --target dev   # Développement (PostgreSQL)
+dbt run --target prod  # Production (MySQL)
 ```
 
 **Configuration de la production:**
-1. Créer un projet GCP et un dataset BigQuery
-2. Créer un compte de service avec permissions BigQuery
-3. Télécharger le fichier de clé JSON
-4. Mettre à jour `profiles.yml` avec l'ID du projet et le chemin du fichier de clé
-5. Installer l'adaptateur: `pip install dbt-bigquery`
+1. Installer/configurer un serveur MySQL
+2. Créer une base de données: `jaffle_shop_analytics`
+3. Créer un utilisateur MySQL avec les permissions appropriées
+4. Mettre à jour `profiles.yml` avec:
+   - `host`: adresse du serveur MySQL
+   - `user`: nom d'utilisateur
+   - `pass`: mot de passe
+   - `database`: nom de la base de données
+5. Installer l'adaptateur: `pip install dbt-mysql`
 
 ## Application Web (Streamlit)
 
@@ -161,7 +165,7 @@ dbt run --target prod  # Production (BigQuery)
 
 **Exécution:** `streamlit run app.py` → http://localhost:8501
 
-**Sources de données:** Se connecte à PostgreSQL (dev) ou BigQuery (prod) via variables d'environnement dans `.env`
+**Sources de données:** Se connecte à PostgreSQL (dev) ou MySQL (prod) via variables d'environnement dans `.env`
 
 ## Dépannage
 
@@ -191,7 +195,7 @@ Configurés dans `.pre-commit-config.yaml`:
 - **app.py** - Tableau de bord Streamlit avec 6 pages
 - **app_requirements.txt** - Dépendances Python pour l'application
 - **.env.example** - Modèle de variables d'environnement pour la configuration de base de données
-- **profiles.yml** - Mise à jour avec cible production BigQuery
+- **profiles.yml** - Mise à jour avec cible production MySQL
 
 ## Ressources de support
 
@@ -199,4 +203,4 @@ Configurés dans `.pre-commit-config.yaml`:
 - [dbt Docs](https://docs.getdbt.com/)
 - [Meilleures pratiques dbt](https://docs.getdbt.com/guides/best-practices)
 - [Documentation Streamlit](https://docs.streamlit.io/)
-- [Documentation BigQuery](https://cloud.google.com/bigquery/docs)
+- [Documentation MySQL](https://dev.mysql.com/doc/)
